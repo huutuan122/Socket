@@ -41,7 +41,7 @@ class Server:
         print('\n')
 
         if method == 'POST':
-            if headers[-1] == 'username=admin&password=admin':
+            if headers[-1] == 'username=1&password=1':
                 filename = '/info.html'
                 self.login = True
 
