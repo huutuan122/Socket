@@ -8,8 +8,9 @@ def send_files(client_connection):
     print(filename)
     f = open(filename, 'r', encoding = "utf-8")
 
-    client_connection.sendall(str.encode("HTTP/1.0 200 OK\n", 'iso-8859-1'))
+    client_connection.sendall(str.encode("HTTP/1.1 200 OK\n", 'iso-8859-1'))
     client_connection.sendall(str.encode('Content-Type: text/html\n', 'iso-8859-1'))
+    
     client_connection.send(str.encode('\r\n'))
 
     for line in f.readlines():
