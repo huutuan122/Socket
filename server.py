@@ -1,7 +1,36 @@
+from os import stat_result
 import socket
-import mimetypes
+import os.path
 import time
-import manageFile
+from datetime import datetime
+
+def send_files(client_connection):
+    filename = 'html/files.html'
+    print(filename)
+    f = open(filename, 'r', encoding = "utf-8")
+
+    status = b'HTTP/1.1 200 OK\n'
+    header = b'Content-Type: text/html\n'    
+    
+    html = ''
+    for line in f.readlines(): #Doc tung dong trong files.html 
+        html += line
+        if '<tbody>' in line:   # Den <tbody> thi them download_file vao style="width:150px;height:150px;"
+            for i in os.scandir("download"): # Vao duong dan
+                html += '<tr><td style="text-align: center;"><a href="../download/{}" download>{}\
+                        </a></td>\n<td style="text-align: center;">{}</td>\n<td style="text-align: center;">{}\
+                        </td></tr>\n'.format(i.name, i.name, datetime.fromtimestamp(os.stat("download/"+i.name).st_mtime)\
+                        , size_formatted(os.stat("download/"+i.name).st_size))
+                #Tra len server
+            line = f.read(1024*20)
+    data = status + header + b'\r\n' + html.encode()
+    client_connection.sendall(data)
+    f.close()
+
+
+
+def size_formatted(bytes, units=[' bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']):
+    return str(bytes) + units[0] if bytes < 1024 else size_formatted(bytes >> 10, units[1:])
 
 class Server:
     def __init__(self, SERVER_HOST = '127.0.0.1', SERVER_PORT = 8888):
@@ -51,16 +80,16 @@ class Server:
                 filename = '/404.html'
                 self.login = True
 
-        # if method == 'GET':
-        #     if filename[6::] != 'html':
-
-
         if self.login == False and filename != '/':
-                filename = '/index.html'
+            
+            filename = '/index.html'
 
         if filename == '/logout' or filename == '/back':
-                self.login = False
-                filename = '/index.html'
+            self.login = False
+            filename = '/index.html'
+        
+        # if filename == '/return':
+        #     filename = '/info.html'
             
         if filename == '/':
                 filename = '/home.html'
@@ -76,28 +105,34 @@ class Server:
                 content_type = 'text/html'
                 header = 'Content-Type: ' + content_type + '\n'
 
-                response = 'HTTP/1.1 200 OK\n' + header + content
+                if filename[1:-5]=='info':
+                    response = 'HTTP/1.1 301 Moved Permanently\n' + header + content
+                elif filename[1:-5]=='404':
+                    response = 'HTTP/1.1 404 NOT FOUND\n' + header + content
+                else:
+                    response = 'HTTP/1.1 200 OK\n' + header + content
 
             except FileNotFoundError:
                 response = 'HTTP/1.1 404 NOT FOUND\n\nFile Not Found'
             client_connection.send(response.encode())
 
         elif filename[1:-5] == 'files':
-                manageFile.send_files(client_connection)
+            send_files(client_connection)
 
         else:
+            # Xu li chunked
             fin = open(filename[1::], 'rb')
-            content = fin.read(1024)
+            data = fin.read(1024*20)
             response_body = b''
             header = 'Transfer-Encoding: chunked\r\n'
-            response = 'HTTP/1.1 200 OK\r\n' + header + 'Content-Type: text/plain'
+            response = 'HTTP/1.1 200 OK\r\n' + header 
             response_body += response.encode() + b'\r\n'
             
-            while content:  # Doc lien tuc
-                content_len = len(content)
-                content_len_hex = hex(content_len)[2:content_len].encode()
-                response_body += content_len_hex + b'\r\n' + content + b'\r\n'
-                content = fin.read(1024)
+            while data:  # Doc lien tuc
+                data_len = len(data)
+                data_len_hex = hex(data_len)[2:data_len].encode()
+                response_body += data_len_hex + b'\r\n' + data + b'\r\n'
+                data = fin.read(1024*20)
             response_body += b'0\r\n\r\n'
             client_connection.sendall(response_body)
             
