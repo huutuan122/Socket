@@ -1,25 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title> Download Page </title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+
+        table {
+            color: rgb(73, 34, 37);
+            font-family: verdana;
+            font-size: 100%;
+        }
+
+        h1 {
+            color: rgb(160, 17, 65);
+            font-family: verdana;
+            font-size: 300%;
+        }
+
+        #files {
+            background-image: url("https://image.freepik.com/free-vector/beautiful-blue-watercolor-background_125540-468.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .item {
+            flex-basis: 80%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 10px;
+            background-image: url(https://image.freepik.com/free-vector/background-stellar-sky-watercolor_125540-28.jpg);
+            background-attachment: fixed;
+            background-size: cover;
+            padding: 5px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        footer {
+            text-align: center;
+            margin: 0px;
+            height: 30px;
+            background-color: rgb(13, 27, 19);
+            color: white;
+        }
+    </style>
 </head>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background:
-            linear-gradient(rgba(240, 212, 0, 0.45),
-                rgba(0, 0, 0, 0.45));
-        height: 100vh;
-    }
-</style>
 
 <body>
+    <!-- <section id="header" style="background-color: mediumturquoise;">
+        <ul>
+            <li><a style="background-color: darkgreen;" href="http://localhost:8000/info.html">Home</a></li>
+            <li><a class="active" href="#files">Files</a></li>
+            <li><a href="http://localhost:8000/info.html#demo">Demo</a></li>
+            <li><a href="http://localhost:8000/info.html#info">Info</a></li>
+            <li style="margin-left: 70%;background-color: darkslategrey;" ;"><a href="index.html">Login</a></li>
+        </ul>
+    </section> -->
     <div class="container">
         <div class="row">
             <div class="col-md-12">

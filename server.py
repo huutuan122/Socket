@@ -88,20 +88,19 @@ class Server:
         else:
             fin = open(filename[1::], 'rb')
             content = fin.read(1024)
-
-            content_type = 'image/jpg'
-            header = 'Content-Type: ' + content_type + '\n\r\n' 
-            response = 'HTTP/1.1 200 OK\n' + header
-
-            client_connection.send(response.encode())
-
-            while content:
-                try:
-                    client_connection.send(content)
-                    content = fin.read(1024)
-                except:
-                    return None
-            fin.close()
+            response_body = b''
+            header = 'Transfer-Encoding: chunked\r\n'
+            response = 'HTTP/1.1 200 OK\r\n' + header + 'Content-Type: text/plain'
+            response_body += response.encode() + b'\r\n'
+            
+            while content:  # Doc lien tuc
+                content_len = len(content)
+                content_len_hex = hex(content_len)[2:content_len].encode()
+                response_body += content_len_hex + b'\r\n' + content + b'\r\n'
+                content = fin.read(1024)
+            response_body += b'0\r\n\r\n'
+            client_connection.sendall(response_body)
+            
 
 if __name__ == '__main__':
     server = Server()
