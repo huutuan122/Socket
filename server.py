@@ -18,9 +18,10 @@ def send_files(client_connection):
         if '<tbody>' in line:   # Den <tbody> thi them download_file vao style="width:150px;height:150px;"
             for i in os.scandir("download"): # Vao duong dan
                 html += '<tr><td style="text-align: center;"><a href="../download/{}" download>{}\
-                        </a></td>\n<td style="text-align: center;">{}</td>\n<td style="text-align: center;">{}\
-                        </td></tr>\n'.format(i.name, i.name, datetime.fromtimestamp(os.stat("download/"+i.name).st_mtime)\
-                        , size_formatted(os.stat("download/"+i.name).st_size))
+                        </a></td>\n<td style="text-align: center;">{}</td>\n<td style="text-align:\
+                        center;">{}</td></tr>\n'.format(i.name, i.name, datetime.fromtimestamp\
+                        (os.stat("download/"+i.name).st_mtime), size_formatted(os.stat("download/"+i.name)\
+                        .st_size))
                 #Tra len server
             line = f.read(1024*20)
     data = status + header + b'\r\n' + html.encode()
@@ -62,9 +63,7 @@ class Server:
         server.close()
     
     def handle_request(self, request, client_connection):
-        
         headers = request.split('\n')
-        # headers['Cache-Control'] = 'no-cache'
         filename = headers[0].split()[1]
         print('Filename: ', filename)
         method = headers[0].split()[0]
@@ -72,7 +71,7 @@ class Server:
         print('\n')
 
         if method == 'POST':
-            if headers[-1] == 'username=1&password=1':
+            if headers[-1] == 'username=admin&password=admin':
                 filename = '/info.html'
                 self.login = True
 
@@ -87,9 +86,6 @@ class Server:
         if filename == '/logout' or filename == '/back':
             self.login = False
             filename = '/index.html'
-        
-        # if filename == '/return':
-        #     filename = '/info.html'
             
         if filename == '/':
                 filename = '/home.html'
